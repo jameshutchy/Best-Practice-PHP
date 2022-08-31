@@ -1,3 +1,8 @@
+/* BCDE224 - Best Practices PHP
+Assignment 2 - Agora Trading
+MySQl Version 8.0
+*/
+-- CREATE DATABASE 
 DROP DATABASE IF EXISTS AgoraTrading;
 CREATE DATABASE AgoraTrading;
 USE AgoraTrading;
@@ -13,6 +18,7 @@ logo LONGBLOB NULL,
 hqAddress VARCHAR(50) NOT NULL,
 hqCity VARCHAR(50) NOT NULL
 )ENGINE=InnoDB;
+SELECT * FROM business;
 
 CREATE TABLE AgoraUser (
 userID INT AUTO_INCREMENT PRIMARY KEY,
@@ -28,11 +34,13 @@ userRole VARCHAR(20) NOT NULL,
 businessID INT NULL,
 FOREIGN KEY (businessID) REFERENCES Business(businessID)
 )ENGINE=InnoDB;
+SELECT * FROM agorauser;
 
 CREATE TABLE ItemCategory (
 categoryID INT AUTO_INCREMENT PRIMARY KEY,
 category VARCHAR(50) NOT NULL
 )ENGINE=InnoDB;
+SELECT * FROM itemcategory;
 
 CREATE TABLE Item (
 itemID INT AUTO_INCREMENT PRIMARY KEY,
@@ -46,6 +54,7 @@ categoryID INT NOT NULL,
 FOREIGN KEY (sellerID) REFERENCES AgoraUser(userID),
 FOREIGN KEY (categoryID) REFERENCES ItemCategory(categoryID)
 )ENGINE=InnoDB;
+SELECT * FROM item;
 
 CREATE TABLE Purchase (
 purchaseID INT AUTO_INCREMENT PRIMARY KEY,
@@ -53,6 +62,7 @@ purchaseDate DATETIME NOT NULL,
 buyerID INT NOT NULL,
 FOREIGN KEY (buyerID) REFERENCES AgoraUser(userID)
 )ENGINE=InnoDB;
+SELECT * FROM purchase;
 
 CREATE TABLE OrderLine (
 orderlineID INT AUTO_INCREMENT PRIMARY KEY,
@@ -63,4 +73,5 @@ purchaseID INT NOT NULL,
 FOREIGN KEY (itemID) REFERENCES Item(itemID),
 FOREIGN KEY (purchaseID) REFERENCES Purchase(purchaseID)
 )ENGINE=InnoDB;
+SELECT * FROM orderline;
 

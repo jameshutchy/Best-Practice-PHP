@@ -1,4 +1,8 @@
--- INSERT DATA AGORA TRADING
+/* BCDE224 - Best Practices PHP
+Assignment 2 - Agora Trading
+MySQl Version 8.0
+*/
+-- INSERT DATA
 USE agoratrading;
 SET @encrypt_key = 'j3k4567ki678ki12lp0';
 
