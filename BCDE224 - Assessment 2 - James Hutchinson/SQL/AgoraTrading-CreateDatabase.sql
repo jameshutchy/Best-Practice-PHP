@@ -42,19 +42,20 @@ category VARCHAR(50) NOT NULL
 )ENGINE=InnoDB;
 SELECT * FROM itemcategory;
 
-CREATE TABLE Item (
+CREATE TABLE listing (
 itemID INT AUTO_INCREMENT PRIMARY KEY,
 itemName VARCHAR(70) NOT NULL,
 itemDescription TEXT NOT NULL,
 photo LONGBLOB NULL,
 price DECIMAL(10,2) NOT NULL,
 inStock INT NOT NULL,
+listingDate DATE NOT NULL,
 sellerID INT NOT NULL,
 categoryID INT NOT NULL,
 FOREIGN KEY (sellerID) REFERENCES AgoraUser(userID),
 FOREIGN KEY (categoryID) REFERENCES ItemCategory(categoryID)
 )ENGINE=InnoDB;
-SELECT * FROM item;
+SELECT * FROM listing;
 
 CREATE TABLE Purchase (
 purchaseID INT AUTO_INCREMENT PRIMARY KEY,
@@ -70,7 +71,7 @@ quantity INT NOT NULL,
 price DECIMAL(10,2) NOT NULL,
 itemID INT NOT NULL,
 purchaseID INT NOT NULL,
-FOREIGN KEY (itemID) REFERENCES Item(itemID),
+FOREIGN KEY (itemID) REFERENCES listing(itemID),
 FOREIGN KEY (purchaseID) REFERENCES Purchase(purchaseID)
 )ENGINE=InnoDB;
 SELECT * FROM orderline;

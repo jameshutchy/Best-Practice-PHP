@@ -4,7 +4,7 @@ MySQl Version 8.0
 */
 -- INSERT DATA
 USE agoratrading;
-SET @encrypt_key = 'j3k4567ki678ki12lp0';
+SET @encrypt_key = SHA2('j3k4567ki678ki12lp0', 256);
 
 -- BUSINESS
 INSERT INTO business (businessName, registrationNumber, bankNumber, contactNumber, email, logo, hqAddress, hqCity)
@@ -18,16 +18,16 @@ SELECT aes_decrypt(bankNumber, @encrypt_key) from business;
 
 -- AGORA USER
 INSERT INTO agorauser (username, firstName, lastName,  userPassword, address, city, contactNumber, userRole, email, businessID)
-VALUES   ("Rachel123","","",SHA2("password1",256),"","","","Admin","",1),
-  ("Uma24","","",SHA2("password2",256),"","","","Admin","",2),
-  ("Cooper56","","",SHA2("password3",256),"","","","Admin","",3),
-  ("Curran69","","",SHA2("password4",256),"","","","Admin","",4),
-  ("Fred16","","",SHA2("password5",256),"","","","Admin","",5),
-  ("Daryl57",AES_ENCRYPT("Daryl",@encrypt_key), AES_ENCRYPT("Barrera",@encrypt_key), SHA2("password6",256),"Ap #803-797 Neque Avenue","Wanaka","(365) 366-3826","seller","maecenas.libero@google.net",1),
-  ("Colorado32",AES_ENCRYPT("Colorado",@encrypt_key), AES_ENCRYPT("Boyle",@encrypt_key), SHA2("password7",256),"Ap #220-5493 Montes, Rd.","Kapiti","(859) 101-5102","buyer","molestie.orci@icloud.ca",2),
-  ("Nicholas58",AES_ENCRYPT("Nicholas",@encrypt_key), AES_ENCRYPT("Tucker",@encrypt_key), SHA2("password8",256),"Ap #433-3388 Euismod Ave","Matamata","(528) 896-8042","seller","mattis.semper.dui@yahoo.edu",3),
-  ("Emi90",AES_ENCRYPT("Emi",@encrypt_key), AES_ENCRYPT("Vance",@encrypt_key), SHA2("password9",256),"Ap #440-1198 Enim St.","Balclutha","(486) 771-5619","seller","aliquet.nec@icloud.ca",4),
-  ("Raja123",AES_ENCRYPT("Raja",@encrypt_key), AES_ENCRYPT("Klein",@encrypt_key), SHA2("password11",256),"672-969 Sed Av.","Waitara","(810) 892-9482","buyer","aliquet@protonmail.net",4);
+VALUES   ("Rachel123","","",AES_ENCRYPT("password1",@encrypt_key),"","","","Admin","",1),
+  ("Uma24","","",AES_ENCRYPT("password2",@encrypt_key),"","","","Admin","",2),
+  ("Cooper56","","",AES_ENCRYPT("password3",@encrypt_key),"","","","Admin","",3),
+  ("Curran69","","",AES_ENCRYPT("password4",@encrypt_key),"","","","Admin","",4),
+  ("Fred16","","",AES_ENCRYPT("password5",@encrypt_key),"","","","Admin","",5),
+  ("Daryl57",AES_ENCRYPT("Daryl",@encrypt_key), AES_ENCRYPT("Barrera",@encrypt_key), AES_ENCRYPT("password6",@encrypt_key),"Ap #803-797 Neque Avenue","Wanaka","(365) 366-3826","seller","maecenas.libero@google.net",1),
+  ("Colorado32",AES_ENCRYPT("Colorado",@encrypt_key), AES_ENCRYPT("Boyle",@encrypt_key), AES_ENCRYPT("password7",@encrypt_key),"Ap #220-5493 Montes, Rd.","Kapiti","(859) 101-5102","buyer","molestie.orci@icloud.ca",2),
+  ("Nicholas58",AES_ENCRYPT("Nicholas",@encrypt_key), AES_ENCRYPT("Tucker",@encrypt_key), AES_ENCRYPT("password8",@encrypt_key),"Ap #433-3388 Euismod Ave","Matamata","(528) 896-8042","seller","mattis.semper.dui@yahoo.edu",3),
+  ("Emi90",AES_ENCRYPT("Emi",@encrypt_key), AES_ENCRYPT("Vance",@encrypt_key), AES_ENCRYPT("password9",@encrypt_key),"Ap #440-1198 Enim St.","Balclutha","(486) 771-5619","seller","aliquet.nec@icloud.ca",4),
+  ("Raja123",AES_ENCRYPT("Raja",@encrypt_key), AES_ENCRYPT("Klein",@encrypt_key), AES_ENCRYPT("password11",@encrypt_key),"672-969 Sed Av.","Waitara","(810) 892-9482","buyer","aliquet@protonmail.net",4);
 SELECT * FROM agorauser;
 
 -- ITEM CATEGORY
@@ -37,16 +37,16 @@ VALUES ("Fruit"), ("Vegetables"), ("Alcohol"), ("Meat"), ("Baking"), ("Dairy"), 
 SELECT * FROM itemcategory;
 
 -- ITEM (sellers 6,8,9) 
-INSERT INTO item (itemName, itemDescription, price, inStock, sellerID, categoryID, photo)
-VALUES ("1kg apples", "Fresh royal gala apples from hawkes bay", 3.39, 250, 6, 1, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
-		("1kg oranges", "Fresh naval oranges from hawkes bay", 2.69, 360, 6, 1, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
-		("1kg parsnip", "Fresh parsnip from hawkes bay", 5.99, 180, 6, 2, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
-		("brimstone tyre", "38.23 brimstone tyre high performance ", 74.99, 90, 8, 15, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
-		("RB20DE", " new Import from japan RB20DE engine", 2349.00, 8, 8, 15, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
-		("1kg Tasty Cheese", "Meadow fresh original tasty cheese", 23.00, 400, 9, 6, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
-        ("1kg Shredded Parmesan", "1kg of the finest meadow fresh shredded parmesan cheese", 26.00, 120, 9,6, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
-        ("Tray Blue Milk", "12 x 2L bottle blue top meadow fresh milk", 35.45, 200, 9, 6, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png'));
- SELECT * FROM item; 
+INSERT INTO listing (itemName, itemDescription, price, inStock, listingDate, sellerID, categoryID, photo)
+VALUES ("1kg apples", "Fresh royal gala apples from hawkes bay", 3.39, 250,now(), 6, 1, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
+		("1kg oranges", "Fresh naval oranges from hawkes bay", 2.69, 360,now(), 6, 1, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
+		("1kg parsnip", "Fresh parsnip from hawkes bay", 5.99, 180,now(), 6, 2, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
+		("brimstone tyre", "38.23 brimstone tyre high performance ", 74.99, 90,now(), 8, 15, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
+		("RB20DE", " new Import from japan RB20DE engine", 2349.00, 8,now(), 8, 15, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
+		("1kg Tasty Cheese", "Meadow fresh original tasty cheese", 23.00, 400,now(), 9, 6, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
+        ("1kg Shredded Parmesan", "1kg of the finest meadow fresh shredded parmesan cheese", 26.00, 120,now(), 9,6, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png')),
+        ("Tray Blue Milk", "12 x 2L bottle blue top meadow fresh milk", 35.45, 200,now(), 9, 6, LOAD_FILE('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/images/araLogo.png'));
+ SELECT * FROM listing; 
   
   -- PURCHASE (buyers 7,10)
   INSERT INTO purchase (purchaseDate, buyerID)
