@@ -19,6 +19,7 @@ hqAddress VARCHAR(50) NOT NULL,
 hqCity VARCHAR(50) NOT NULL
 )ENGINE=InnoDB;
 SELECT * FROM business;
+
 CREATE TABLE AgoraUser (
 userID INT AUTO_INCREMENT PRIMARY KEY,
 firstName VARBINARY(500) NULL,
@@ -34,8 +35,7 @@ businessID INT NULL,
 FOREIGN KEY (businessID) REFERENCES Business(businessID)
 )ENGINE=InnoDB;
 SELECT * FROM agorauser;
-select userID, AES_DECRYPT(firstName,@encrypt_key) AS first, AES_DECRYPT(lastName,@encrypt_key) AS last, 
-            address, city, contactNumber, userRole, businessID, email, userpassword from agorauser;
+
 CREATE TABLE ItemCategory (
 categoryID INT AUTO_INCREMENT PRIMARY KEY,
 category VARCHAR(50) NOT NULL
