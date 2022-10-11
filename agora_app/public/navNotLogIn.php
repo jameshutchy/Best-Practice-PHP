@@ -7,13 +7,13 @@ $nav= '<div class="row">
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav w-100 pt-1 justify-content-start">
             <li class="nav-item rounded-2 active hover">
-              <a class="nav-link pr-5 text-dark h5" href="##site##index.php">Home<span class="sr-only">(current)</span></a>
+              <a class="nav-link pr-5 text-dark h5" href="##site##index.php">Home</a>
             </li>
             <li class="nav-item rounded-2 pr-5 hover">
               <a class="nav-link text-dark" href="##site##user.php/login/">Listings</a>
             </li>
             <li class="nav-item rounded-2 pr-5 hover">
-                <a class="nav-link text-dark" href="activity.php">Activity</a>
+                <a class="nav-link text-dark" href="##site##user.php/login/">Activity</a>
               </li>
           </ul>
         </div>

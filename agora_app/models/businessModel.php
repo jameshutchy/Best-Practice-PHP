@@ -3,11 +3,12 @@ class BusinessModel extends AbstractModel {
 
     private $businessID;
     private $name;
-    private $hQaddress;
+    private $hQAddress;
     private $hQCity;
     private $regID;
     private $bankNumber;
     private $logo;
+    private $users;
     private $changed;
     
     //login will create userModel with empty properties and onload will generate, but for sign in will pass all properties to then be saved.
@@ -31,7 +32,7 @@ class BusinessModel extends AbstractModel {
     public function getName() {
 		return $this->name;
 	}
-	public function RegID() {
+	public function getRegID() {
 		return $this->regID;
 	}
 		
@@ -94,7 +95,7 @@ class BusinessModel extends AbstractModel {
             $this->regID=$row['registrationNumber'];
             $this->bankNumber=$row['bankNumber'];
             $this->logo=$row['logo'];
-            $this->hQaddress=$row['hqAddress'];
+            $this->hQAddress=$row['hqAddress'];
             $this->hQCity=$row['hqCity'];
             $this->changed=false;
         
@@ -104,26 +105,26 @@ class BusinessModel extends AbstractModel {
 	public function save() {
 		$id=$this->businessID;
 		$name=$this->name;
-        $addy=$this->hQaddress;
+        $addy=$this->hQAddress;
         $city=$this->hQCity;
         $bnknum=$this->bankNumber;
         $regID=$this->regID;
         $logo=$this->logo;
 		
-		if ($this->businessID===null) {
+		if ($id === null) {
 			$sql="insert into business(businessName, registrationNumber, bankNumber, logo, 
             hqAddress, hqCity) 
             values ("."'$name', '$regID', '$bnknum', '$logo', '$addy', '$city')";
 			$this->getDB()->execute($sql);
 			$this->businessID=$this->getDB()->getInsertID();	
 		} else {
-			$sql="update agorauser ".
+			$sql="update business ".
 					"set businessName='$name', ".
 			            "registrationNumber='$regID', ".
                         "bankNumber='$bnknum', ".
                         "logo='$logo', ".
                         "hqAddress='$addy', ".
-                        "hqCity='$city', ".
+                        "hqCity='$city' ".
 					"where businessID = $id";
 			$this->getDB()->execute($sql);
 		}
@@ -157,9 +158,9 @@ class BusinessModel extends AbstractModel {
             $password=$row['userPassword'];
             $user = new UserModel($this->getDB(), $username, $id, $email, $password, $firstName, $lastName, $role, 
             $address, $city, $contactNumber, $businessID);
-            $users=[];
-            $users[]=$listing;
+            $this->users[]=$user;
     }
+    return $this->users;
     }
 
 

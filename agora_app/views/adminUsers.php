@@ -6,37 +6,62 @@ class AdminUsersView extends AbstractView {
         $model = $this->getModel();
         $business = $model->getBusiness();
         $users = $business->getUsers();
-        $content = '<h1>Users</h1>'
-        //GOT TO HERE !!!!
-        foreach ($users as $user) {
-            $content.= 
-            '<a href="listing.html">
-              <div class="listingCard  rounded-2 border m-1">
-                <h2 class="listingName p-2 rounded-top">'.$user->getItemName().'</h2>
-                <div class="m-1 d-flex">
-                  <img src="##site##images/'.$listing->getPhoto().'" class="listImage m-2" alt="'.$listing->getItemName().'">
-                  <div class="m-1">
-                  <h2>Price: '.$listing->getPrice().'</h2>
-                  <p>Seller: '.$listing->getSellerName().'</p>
-                  <p>Contact: '.$listing->getSellerContact().'</p>
-                  <p>'.$listing->getHashTag().'</p>
-                  <span class="listingAge">Listed '.$listing->getListingDate().'</span>
+        $content = '<section class="d-flex flex-column">
+        <div class="d-flex justify-content-start">
+          <h1 class="flex-fill">Users</h1> 
+          <a href="##site##user.php/addUser/'.$model->getID().'">
+            <button class="btn btnColour m-1">Add User</button>
+          </a>
+        </div> 
+        <div class="mt-2 listingsContainer">';
+        if (count($users) > 1){
+          foreach ($users as $user) {
+            if ($user->getRole() !== 'admin'){
+              $content.= 
+              '<div class="listingCard  rounded-2 border m-1">
+                <h2 class="listingName p-2 rounded-top">'.$user->getRole().'</h2>
+                    
+                <div class="d-flex flex-wrap justify-content-between">
+                    <div class="m-1 px-2">
+                      <p>Name<p>
+                      <h5>'.$user->getFirstName(). " " .$user->getLastName().'</h5>                    
+                  </div>
+
+                  <div class="m-1 px-2">
+                    <p>Email<p>
+                    <h5>'.$user->getEmail().'</h5>    
+                  </div> 
+                  <div class="m-1 px-2">
+                  <p>Contact No#</p>                   
+                  <h5>'.$user->getContactNumber().'</h5>
                 </div>
-                </div>
-              </div>
-            </a>';
+
+                  <div class="m-1 px-2">
+                    <p>Address<p>
+                    <h5>'.$user->getAddress().'</h5>     
+                  </div>     
+
+                  <div class="m-1 px-2">
+                    <p>City</p>                   
+                    <h5>'.$user->getCity().'</h5>
+                  </div>
+                  
+                      <div class="m-1 d-flex">     
+                        <a class="mt-3 href="##site##user.php/editUser/'.$user->getID().'"><button class="btn btnColour m-1">Edit Profile</button></a>
+                        <a class="mt-3 href="##site##user.php/deleteUser/'.$user->getID().'"><button class="btn btnColour m-1">Delete</button></a>                                                       
+                    </div>
+                  </div>
+                </div>';
+            }          
         }
-        $content.='</div>';
-        
-        $role = $model->getRole();
-        if ($role == 'admin'){
-          include_once 'pubic/adminProfile.php';
-        }
+      }      
         else {
-          include_once 'public/userProfile.php';
+          $content.= '<h2>Create a Buyer Or Seller Account to start trading</h2>';
         }
+        $content.='</div></section>';
+        
+        include 'public/defineRole.php';
         include_once 'public/signOut.php';
-        include_once 'public/navLogIn.php';
         $this->setTemplateField('nav', $nav);
 		$this->setTemplateField('login', $login);
 	  	$this->setTemplateField('content',$content);

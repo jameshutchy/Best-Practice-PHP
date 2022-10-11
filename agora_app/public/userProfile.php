@@ -10,5 +10,5 @@ $user.="<p>".$model->getFirstName()." ".$model->getLastName()."</p>
   <p>".$model->getContactNumber()."</p>
 </div>
 </div>";
-$user.='<a href="index.html"><button class="btn m-1 btnColour">Edit Profile</button></a>';
+$user.='<a href="##site##user.php/editUser/'.$model->getID().'"><button class="btn m-1 btnColour">Edit Profile</button></a>';
 ?>

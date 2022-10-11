@@ -6,16 +6,10 @@ class UserIndexView extends AbstractView {
         $model = $this->getModel();
         
         include_once 'public/homeContent.php';
-        $role = $model->getRole();
-        if ($role == 'admin'){
-          include_once 'public/adminProfile.php';      
-        }
-        else {
-          include_once 'public/userProfile.php';
-        }
+        include 'public/defineRole.php';
         include_once 'public/signOut.php';
 
-        include_once 'public/navLogIn.php';
+        
         
       $this->setTemplateField('nav', $nav);
       $this->setTemplateField('login', $login);

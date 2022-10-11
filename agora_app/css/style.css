@@ -27,7 +27,7 @@
     width: 10rem;
 }
 .listingsContainer {
-    height: 25rem;
+    height: 35rem;
     overflow: auto;
 }
 ::-webkit-scrollbar {
@@ -54,7 +54,7 @@
     background-color: #8dc3cc;
 }
 .listImage {
-    width: 10rem;
+    width: 12rem;
 
 }
 .listingAge {

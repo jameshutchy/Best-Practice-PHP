@@ -33,7 +33,7 @@ businessID INT NULL,
 FOREIGN KEY (businessID) REFERENCES Business(businessID)
 )ENGINE=InnoDB;
 SELECT * FROM agorauser;
-
+-- update agorauser set username = 'admin' where userID = 11;
 
 CREATE TABLE listing (
 itemID INT AUTO_INCREMENT PRIMARY KEY,

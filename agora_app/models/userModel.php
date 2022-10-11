@@ -21,8 +21,12 @@ class UserModel extends AbstractModel {
     public $isLogedIn;
     
     //login will create userModel with empty properties and onload will generate, but for sign in will pass all properties to then be saved.
-    public function __construct($db, $username=null, $id=null, $email=null, $password=null, $firstName=null, $lastName=null, $role=null, 
-    $address=null, $city=null, $contactNumber=null, $businessID=null) {
+    public function __construct($db, 
+    $username=null, $id=null, $email=null, 
+    $password=null, $firstName=null, 
+    $lastName=null, $role=null, 
+    $address=null, $city=null, 
+    $contactNumber=null, $businessID=null) {
 		parent::__construct($db);
         $this->setUserName($username);
 		$this->setEmail($email);
@@ -42,7 +46,7 @@ class UserModel extends AbstractModel {
 	public function getID() {
 		return $this->userID;
 	}
-    public function getuserName() {
+    public function getUserName() {
 		return $this->userName;
 	}
 	public function getFirstName() {
@@ -77,6 +81,9 @@ class UserModel extends AbstractModel {
 
     public function getBusiness() {
         return $this->business;
+    }
+    public function getPassword() {
+        return $this->password;
     }
 	public function hasChanges() {
 		return $this->changed;
@@ -115,6 +122,7 @@ class UserModel extends AbstractModel {
     public function hashPassword($password) {
         $this->password = password_hash($password, PASSWORD_BCRYPT);
     } 
+
     public function setBusinessID($value){
         $this->businessID = $value;
         $this->changed=true;
@@ -211,15 +219,13 @@ class UserModel extends AbstractModel {
 		} else {
 			$sql="update agorauser ".
 					"set email='$email', ".
-                        "username='$username', ".
-			            "userPassword='$password', ".
+			            "userPassword='$pass', ".
                         "firstName='$first', ".
                         "lastName='$last', ".
                         "address='$addy', ".
                         "city='$city', ".
                         "contactNumber='$number', ".
-                        "userRole='$role', ".
-                        "businessID='$busID', ".
+                        "businessID='$busID'".
 					"where userID= $id";
 			$this->getDB()->execute($sql);
 		}
@@ -233,8 +239,8 @@ class UserModel extends AbstractModel {
 		$this->changed=false;
 	}
     // Business
-    public function editBusiness($db, $id, $busName, $bnkNum, $regID, $hQaddy, $hQCity, $logo){
-        $business = new BusinessModel($db, $id, $busName, $bnkNum, $regID, $hQaddy, $hQCity, $logo);
+    public function editBusiness($db, $id, $busName, $bnkNum, $regID, $hQAddy, $hQCity, $logo){
+        $business = new BusinessModel($db, $id, $busName, $bnkNum, $regID, $hQAddy, $hQCity, $logo);
         $business->save();
         return $business;
     }
@@ -247,19 +253,17 @@ class UserModel extends AbstractModel {
     public function loadListings($word){
         switch($this->role){
             case 'admin':
-                $sql = "call sp_searchListingAdmin(".$this->businessID", '$word')";
+                $sql = "call sp_searchListingAdmin(".$this->businessID.", '$word')";
             break;
-            case 'seller':               
+            case 'Seller':               
                 $sql = "call sp_searchListingSeller(".$this->userID.",'$word')";
             break;
-            case 'buyer':
-                $sql = "call sp_searchListingBuyer(".$this->businessID", '$word')";
+            case 'Buyer':
+                $sql = "call sp_searchListingBuyer(".$this->businessID.", '$word')";
             break;
         }
         $rows=$this->getDB()->query($sql);
-        if (count($rows)==0) {
-            throw new InvalidDataException("listings not found");
-        }
+        if (count($rows)!==0) {
         foreach ($rows as $row){
             $itemID=$row['itemID'];
             $itemName=$row['itemName'];
@@ -273,6 +277,7 @@ class UserModel extends AbstractModel {
             $sellerName=$row['sellerName'];
             $listing = new ListingModel($this->getDB(),$itemID,$itemName,$itemDescription,$photo,$price,$listingDate,$hashTag,$sellerID,$sellerContact,$sellerName);
             $this->listings[]=$listing;
+        }
     }
     }
     public function editListing($db, $id, $itemName, $itemDescription, $price, $hashTag, $photo){

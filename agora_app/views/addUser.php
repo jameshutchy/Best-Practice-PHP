@@ -3,12 +3,14 @@ require_once 'lib/abstractView.php';
 class AddUserView extends AbstractView {
 
 	public function prepare () {
-		$content='<h1>Sign Up</h1>
-        <form class="aForm p-4" action="##site##user.php/addUser" method="post">
+    $model = $this->getModel();
+    include 'public/navAdmin.php';
+		$content='<h1>User</h1>
+        <form class="aForm p-4" action="##site##user.php/addUser/'.$model->getID().'" method="post">
             <div class="mb-3">
-              <label for="accountType" class="form-label">Account Type</label>
-              <select id="accountType" class="form-select">
-                <option selected disabled hidden>Choose Account...</option>
+              <label for="role" class="form-label">Account Type</label>
+              <select id="role" name="role" class="form-select" required="true">
+                <option value="">Choose Account...</option>
                 <option value="Seller">Seller</option>
                 <option value="Buyer">Buyer</option>
               </select>
@@ -35,23 +37,31 @@ class AddUserView extends AbstractView {
             <input type="email" class="form-control" id="email" name="email"required>
           </div>
           <div class="mb-3">
+          <label for="contactNumber" class="form-label">Contact Number</label>
+          <input type="text" class="form-control" id="contactNumber" name="contactNumber" required>
+        </div>
+          <div class="mb-3">
           <label for="username" class="form-label">Username</label>
           <input type="text" class="form-control" id="username" name="userName"required>
         </div>
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" required>
+            <input type="password" class="form-control" name="password" required>
           </div>
           <div class="mb-3">
             <label for="confirmPassword" class="form-label">Confirm Password</label>
-            <input type="password" class="form-control" id="confirmPassword" required>
+            <input type="password" class="form-control" ="confirmPassword" required>
           </div>
           <button type="submit" class="btn btnColour">Submit</button> 
           </form>';
 
           include_once 'public/signOut.php';
-          include_once 'public/navLogIn.php';
+
+          $this->setTemplateField('test', $model->getRole());
           $this->setTemplateField('nav', $nav);
               $this->setTemplateField('login', $login);
                 $this->setTemplateField('content',$content);
-              $this->setTemplateField('pagename', 'Sign Up');
+              $this->setTemplateField('pagename', 'Add User');
+  }
+}
+  ?>

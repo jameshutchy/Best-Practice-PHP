@@ -33,7 +33,7 @@ class ListingFormView extends AbstractView {
             </div>
         </form>';
     include_once 'public/signIn.php';
-    include_once 'public/navNotLogIn.php';
+    include 'public/navLogIn.php'
     $this->setTemplateField('nav', $nav);
 		$this->setTemplateField('login', $login);
 	  	$this->setTemplateField('content',$content);

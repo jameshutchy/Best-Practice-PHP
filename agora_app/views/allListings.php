@@ -24,12 +24,12 @@ class allListingsView extends AbstractView {
             <option value="highest">Highest Price</option>
             <option value="lowest">Lowest Price</option>
             </select>';
-        if ($role == 'seller'){
+        if ($role == 'Seller'){
           include_once 'public/newListingButton.php';
         }           
         $content.='</div>
         <div class="mt-2 listingsContainer">';
-
+        if ($listings != null){
         foreach ($listings as $listing) {
             $content.= 
             '<a href="listing.html">
@@ -38,7 +38,7 @@ class allListingsView extends AbstractView {
                 <div class="m-1 d-flex">
                   <img src="##site##images/'.$listing->getPhoto().'" class="listImage m-2" alt="'.$listing->getItemName().'">
                   <div class="m-1">
-                  <h2>Price: '.$listing->getPrice().'</h2>
+                  <h2>Price: $'.$listing->getPrice().'</h2>
                   <p>Seller: '.$listing->getSellerName().'</p>
                   <p>Contact: '.$listing->getSellerContact().'</p>
                   <p>'.$listing->getHashTag().'</p>
@@ -48,17 +48,12 @@ class allListingsView extends AbstractView {
               </div>
             </a>';
         }
+      }
         $content.='</div>';
         
-        $role = $model->getRole();
-        if ($role == 'admin'){
-          include_once 'pubic/adminProfile.php';
-        }
-        else {
-          include_once 'public/userProfile.php';
-        }
+        include 'public/defineRole.php';
         include_once 'public/signOut.php';
-        include_once 'public/navLogIn.php';
+
         $this->setTemplateField('nav', $nav);
 		$this->setTemplateField('login', $login);
 	  	$this->setTemplateField('content',$content);
