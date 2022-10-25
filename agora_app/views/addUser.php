@@ -6,7 +6,7 @@ class AddUserView extends AbstractView {
     $model = $this->getModel();
     include 'public/navAdmin.php';
 		$content='<h1>User</h1>
-        <form class="aForm p-4" action="##site##user.php/addUser/'.$model->getID().'" method="post">
+        <form class="aForm p-4" action="##site##user.php/addUser" method="post">
             <div class="mb-3">
               <label for="role" class="form-label">Account Type</label>
               <select id="role" name="role" class="form-select" required="true">

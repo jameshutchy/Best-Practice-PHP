@@ -6,7 +6,7 @@ class editAdminView extends AbstractView {
     $model = $this->getModel();
     $business = $model->getBusiness();
     $content='<h1>Profile</h1>
-    <form class="aForm p-4" action="##site##user.php/editAdmin/'.$model->getID().'" method="post" enctype="multipart/form-data">
+    <form class="aForm p-4" action="##site##user.php/editAdmin" method="post" enctype="multipart/form-data">
         <div class="mb-3">
           <label for="businessName" class="form-label">Business Name</label>
           <input type="text" class="form-control" id="businessName" name="businessName" value="'.$business->getName().'">

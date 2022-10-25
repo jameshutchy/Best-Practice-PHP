@@ -7,13 +7,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav w-100 pt-1 justify-content-start">
             <li class="nav-item rounded-2 active hover">
-              <a class="nav-link pr-5 text-dark " href="##site##user.php/user/'.$model->getID().'">Home</a>
+              <a class="nav-link pr-5 text-dark " href="##site##user.php/user">Home</a>
             </li>
             <li class="nav-item rounded-2 pr-5 hover">
-              <a class="nav-link text-dark" href="##site##user.php/allListings/'.$model->getID().'">Listings</a>
+              <a class="nav-link text-dark" href="##site##user.php/allListings">Listings</a>
             </li>
             <li class="nav-item rounded-2 pr-5 hover">
-                <a class="nav-link text-dark" href="##site##user.php/activity/'.$model->getID().'">Activity</a>
+                <a class="nav-link text-dark" href="##site##user.php/activity">Activity</a>
               </li>
           </ul>
         </div>

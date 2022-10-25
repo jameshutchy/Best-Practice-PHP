@@ -17,6 +17,7 @@ class UserModel extends AbstractModel {
     private $businessID;
     private $business;
     private $listings;
+    private $listing;
     private $changed;
     public $isLogedIn;
     
@@ -30,7 +31,7 @@ class UserModel extends AbstractModel {
 		parent::__construct($db);
         $this->setUserName($username);
 		$this->setEmail($email);
-        $this->hashPassword($password);
+        $this->setPassword($password);
 		$this->setfirstName($firstName);
 		$this->setLastName($lastName);
         // role and id cant change
@@ -119,8 +120,12 @@ class UserModel extends AbstractModel {
 		$this->userName=$value;
 		$this->changed=true;
 	}
-    public function hashPassword($password) {
-        $this->password = password_hash($password, PASSWORD_BCRYPT);
+    public function setPassword($value){
+        $this->password = $value;
+        $this->changed=true;
+    }
+    public function hashPassword() {
+        $this->password = password_hash($this->password, PASSWORD_BCRYPT);
     } 
 
     public function setBusinessID($value){
@@ -131,7 +136,7 @@ class UserModel extends AbstractModel {
     //Need to call this! needs work
     public function verifyPassword($username, $password){
         $escp = $this->getDB();
-        $sql="select userpassword from agorauser WHERE username = '$username'";
+        $sql="select userPassword from agorauser WHERE username = '$username';";
         $rows=$this->getDB()->query($sql);
         if (count($rows)==0) {
             throw new InvalidDataException("Username $username not found");
@@ -148,19 +153,27 @@ class UserModel extends AbstractModel {
         }
         return $result;
     }
-    function userLogin() {
-        session_start();
-        $_SESSION['username'] = $this->username;
-        return $_SESSION['username'];
+    function userLogin($username, $password) {
+        if($this->verifyPassword($username, $password)){
+            session_start();
+            $this->getUserByUserName($username);
+            $_SESSION['id'] = $this->userID;
+            $_SESSION['role'] = $this->role;
+            $_SESSION['bussinesID'] = $this->$businessID;
+        }
+        else {
+            throw new InvalidDataException("incorrect password");
+        }
+
       }
 
     // get user 
 	public function getUserByUserName($username) {   
             $this->username = $username;
-            $sql="select * from agorauser where username = '$username'";
+            $sql="select * from agorauser where username = '$username';";
             $rows=$this->getDB()->query($sql);
             if (count($rows)==0) {
-                throw new InvalidDataException("user email $username not found");
+                throw new InvalidDataException("user email $username not found;");
             }
             $row=$rows[0];
             $this->firstName=$row['firstName'];
@@ -213,7 +226,7 @@ class UserModel extends AbstractModel {
 		if ($this->userID===null) {
 			$sql="insert into agorauser(username, email, userPassword, firstName, lastName, 
             address, city, contactNumber, userRole, businessID) 
-            values ("."'$username', '$email', '$pass', '$first', '$last', '$addy', '$city', '$number', '$role', '$busID')";
+            values ("."'$username', '$email', '$pass', '$first', '$last', '$addy', '$city', '$number', '$role', '$busID');";
 			$this->getDB()->execute($sql);
 			$this->userID = $this->getDB()->getInsertID();	
 		} else {
@@ -226,16 +239,19 @@ class UserModel extends AbstractModel {
                         "city='$city', ".
                         "contactNumber='$number', ".
                         "businessID='$busID'".
-					"where userID= $id";
+					"where userID= $id;";
 			$this->getDB()->execute($sql);
 		}
 		$this->hasChanges=false;
 	}
 	//needs work
-	public function delete () {
-	    $sql="delete from agorauser where userID = $id";
+	public function delete ($id) {
+        $sql ="delete from listing where sellerID = '$id'";       
 		$rows=$this->getDB()->execute($sql);
-		$this->id=$null;
+        $sql ="delete from purchase where buyerID = '$id'";       
+		$rows=$this->getDB()->execute($sql);
+        $sql = "delete from agoraUser where userID = '$id'";
+        $this->getDB()->execute($sql);
 		$this->changed=false;
 	}
     // Business
@@ -253,13 +269,13 @@ class UserModel extends AbstractModel {
     public function loadListings($word){
         switch($this->role){
             case 'admin':
-                $sql = "call sp_searchListingAdmin(".$this->businessID.", '$word')";
+                $sql = "call sp_searchListingAdmin(".$this->businessID.", '$word');";
             break;
             case 'Seller':               
-                $sql = "call sp_searchListingSeller(".$this->userID.",'$word')";
+                $sql = "call sp_searchListingSeller(".$this->userID.",'$word');";
             break;
             case 'Buyer':
-                $sql = "call sp_searchListingBuyer(".$this->businessID.", '$word')";
+                $sql = "call sp_searchListingBuyer(".$this->businessID.", '$word');";
             break;
         }
         $rows=$this->getDB()->query($sql);
@@ -284,9 +300,51 @@ class UserModel extends AbstractModel {
         $listing = new ListingModel($db, $id, $itemName, $itemDescription, $photo, 
         $price, null, $hashTag, $this->userID, null, null);
         $listing->save();
+        return $listing;
     }
     public function getListings(){
         return $this->listings;
+    }
+    // load and get single listing
+    public function loadListingByID($db, $id){
+        $theListing = new ListingModel($db);
+        $theListing->load($id);
+        $this->listing = $theListing;
+    }
+    public function getSingleListing(){
+        return $this->listing;
+    }
+    public function getlistingPhoto($id) {
+        $photo = "1";
+        $sql="select photo from listing where itemID = '$id'";
+        $rows=$this->getDB()->query($sql);
+        if (count($rows)!==0) {
+            $row=$rows[0];
+            $photo = $row['photo'];
+        }
+        return $photo;
+    }
+    // //sort listings
+    // public function sortListings($sortBy){
+    //     switch ($sortBy){
+    //         case 'newest':
+
+    //         break;
+    //         case 'oldest':
+
+    //         break;
+    //         case 'highest':
+
+    //         break;
+    //         case 'lowest':
+
+    //         break;
+    //     }
+    // }
+    // purchase listing
+    public function purchaseListing($id) {
+        $sql="call sp_purchaseItem(".$this->userID.", '$id');";
+        $this->getDB()->execute($sql);
     }
 
 }

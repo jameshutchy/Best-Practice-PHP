@@ -11,5 +11,5 @@ $user.="<p>".$business->getName()."</p>
   <p>".$model->getContactNumber()."</p>
 </div>
 </div>";
-$user.='<a href=##site##user.php/editAdmin/'.$model->getID().'><button class="btn m-1 btnColour">Edit Profile</button></a>';
+$user.='<a href=##site##user.php/editAdmin><button class="btn m-1 btnColour">Edit Profile</button></a>';
 ?>

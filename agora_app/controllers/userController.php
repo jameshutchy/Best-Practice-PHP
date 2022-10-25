@@ -21,10 +21,9 @@ class UserController extends AbstractController {
                 if($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $username = $_POST['username'];
                     $password = $_POST['password'];
-                    $model->verifyPassword($username, $password);
+                    $model->userLogin($username, $password);
                     //need some work here!!!! - Create Session
-                    $model->getUserByUserName($username);
-                    $this->redirect_to('user/'. $model->getID().'');
+                    $this->redirect_to('user');
                 }
                 break;
             case 'signUp':
@@ -41,15 +40,15 @@ class UserController extends AbstractController {
                     $_POST["hQCity"], $logo); 
                     $model= new UserModel($db, $_POST["userName"], null, $_POST["email"], $_POST["password"],
                     null, null, "admin", null, null, $_POST["contactNumber"], $business->getBusinessID());
+                    $model->hashPassword();
                     $model->save(); 
-                    $this->redirect_to('user/'. $model->getID().'');          
+                    $this->redirect_to('user');          
             }
             break;
             case 'addUser':
                 include_once 'views/addUser.php';
                 include_once 'lib/initModel.php';
                 $view = new AddUserView();
-
                 $view->setTemplate('html/form.html');
                 if($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $user = new UserModel(
@@ -57,11 +56,13 @@ class UserController extends AbstractController {
                     $_POST["password"], $_POST["firstName"], 
                     $_POST["lastName"], $_POST["role"], 
                     $_POST["address"], $_POST["city"], 
-                    $_POST["contactNumber"],                      
+                    $_POST["contactNumber"],                    
                     $model->getBusinessID());
+                    $user->hashPassword();  
                     $user->save();
                 }
             break;
+            // index when logged in
             case 'user':
                 include_once 'lib/initModel.php';
                 include_once 'views/userIndex.php';
@@ -82,7 +83,16 @@ class UserController extends AbstractController {
                 include_once 'views/allListings.php';
                 $view = new AllListingsView();
                 $view->setTemplate('html/masterPage.html');
-                $model->loadListings('');
+                if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                    $model->loadListings($_POST['searchListing']);
+                    // if($_POST['sort'] !== 'Sort'){
+                    //     $model->sortListings($_POST['sort']);
+                    // }
+
+                }
+                else{
+                    $model->loadListings('');
+                }
             break;
             case 'newListing':
                 include_once 'lib/initModel.php';
@@ -97,8 +107,24 @@ class UserController extends AbstractController {
                     $_POST["price"],                    
                     $_POST["hashTag"],
                     $photo); 
-                 $this->redirect_to('/agora_app/user.php/allListings/' . $model->getID().'');          
+                 $this->redirect_to('/agora_app/user.php/allListings');          
             }
+            break;
+            case 'singleListing':
+                include_once 'lib/initModel.php';
+                include_once 'views/singleListing.php';
+                $listingID = $uri->getID();
+                $view = new SingleListingView();
+                $view->setTemplate('html/masterPage.html');
+                $model->loadListingByID($db, $listingID);               
+            break;
+            case 'purchase':
+                include_once 'lib/initModel.php';
+                include_once 'views/userIndex.php';
+                $listingID = $uri->getID();
+                $view = new UserIndexView();
+                $view->setTemplate('html/masterPage.html');
+                $model->purchaseListing($listingID);               
             break;
             case 'admin':
                 include_once 'lib/initModel.php';
@@ -129,7 +155,7 @@ class UserController extends AbstractController {
                     $updateModel= new UserModel($db, $model->getUserName(), $model->getID(), $_POST["email"], $_POST["password"],
                     null, null, "admin", null, null, $_POST["contactNumber"], $model->getBusinessID());
                     $updateModel->save();
-                 $this->redirect_to('/agora_app/user.php/user/' . $model->getID().'');          
+                 $this->redirect_to('/agora_app/user.php/user');          
             }
             break;
             case 'editUser':
@@ -138,6 +164,7 @@ class UserController extends AbstractController {
                 $view = new EditUserView();
                 $view->setTemplate('html/form.html');
                 if($_SERVER['REQUEST_METHOD'] == 'POST') {
+
                     $user = new UserModel(
                     $db, $model->getUserName(), $id, $_POST["email"], 
                     $_POST["password"], $_POST["firstName"], 
@@ -145,10 +172,53 @@ class UserController extends AbstractController {
                     $_POST["address"], $_POST["city"], 
                     $_POST["contactNumber"],                      
                     $model->getBusinessID());
+                    if ($_POST["password"] !== ""){
+                        $user->hashPassword();
+                    }
                     $user->save();
-                    $this->redirect_to('/agora_app/user.php/user/' . $model->getID().''); 
+                    $this->redirect_to('/agora_app/user.php/user'); 
                 }
             break;
+            case 'deleteUser':
+                include_once 'lib/initModel.php';
+                $userID = $uri->getID();
+                $model->delete($userID);
+                 $this->redirect_to('/agora_app/user.php/user');
+            break;
+            case 'editListing':
+                include_once 'views/editListing.php';
+                include_once 'lib/initModel.php';
+                $listingID = $uri->getID(); 
+                if($_SERVER['REQUEST_METHOD'] == 'POST') {  
+                    if ($_FILES["uploadfile"]["name"] == ""){
+                        $photo = $model->getlistingPhoto($listingID);
+                    } 
+                    else {    
+                        $photo = $this->addImgFile(); 
+                    }                                
+                    $isting = $model->editListing($db, $listingID,
+                    $_POST["itemName"], 
+                    $_POST["description"],
+                    $_POST["price"],                    
+                    $_POST["hashTag"],
+                    $photo); 
+                    //$this->editListing($db, $listingID, $model);
+                 $this->redirect_to('/agora_app/user.php/user');
+                }
+
+                    $view = new EditListingView();
+                    $model->loadListingByID($db, $listingID);
+                    $listing = $model->getSingleListing();               
+                    $view->setTemplate('html/form.html');
+            break;
+            case 'deleteListing':
+                include_once 'lib/initModel.php';
+                $listingID = $uri->getID();
+                $listing = new ListingModel($db);
+                $listing->delete($listingID);
+                 $this->redirect_to('/agora_app/user.php/user');
+            break;
+
 			default:
 				throw new InvalidRequestException ("Invalid action in URI");
 		}
@@ -166,4 +236,22 @@ class UserController extends AbstractController {
         move_uploaded_file( $source, $destination );
         return $basename;
 }
+    private function editListing($db, $id, $model) {
+        // if($_SERVER['REQUEST_METHOD'] == 'POST') {  
+        //     if ($_FILES["uploadfile"]["name"] == ""){
+                
+        //         $photo = $listing->getPhoto();
+        //     } 
+        //     else {    
+        //         $photo = $this->addImgFile(); 
+        //     }                                
+            $model->editListing($db, $id,
+            $_POST["itemName"], 
+            $_POST["description"],
+            $_POST["price"],                    
+            $_POST["hashTag"],
+            $photo); 
+        }
+
+   // }
 }

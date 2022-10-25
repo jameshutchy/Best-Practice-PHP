@@ -13,10 +13,8 @@ class ListingModel extends AbstractModel {
     private $sellerName;
     private $changed;
     
-    //login will create userModel with empty properties and onload will generate, but for sign in will pass all properties to then be saved.
     public function __construct($db, $id=null, $itemName=null, $itemDescription=null, $photo=null, $price=null, $listingDate=null, 
     $hashTag=null, $sellerID=null, $sellerContact=null, $sellerName=null) {
-        //setter functions for exceptions ie businessID doesnt exist****
 		parent::__construct($db);
         $this->itemID=$id;
 		$this->setItemName($itemName);
@@ -108,9 +106,9 @@ class ListingModel extends AbstractModel {
 
 	public function load($id) {  
         $this->itemID = $id;     
-        $sql="CALL sp_loadListing($id)";
+        $sql="CALL sp_loadListing('$id')";
         $rows=$this->getDB()->query($sql);
-        if (count($rows)!==0) {
+        if (count($rows)==0) {
             throw new InvalidDataException("listing id $id not found");
         }
         $row=$rows[0];
@@ -135,30 +133,33 @@ class ListingModel extends AbstractModel {
         $price=$this->price;
         $hashTag=$this->hashTag;
         $sellID=$this->sellerID;
+        $date = $this->listingDate;
 		
-		if ($this->itemID===null) {
+		if ($id === null) {
 			$sql="insert into listing(itemName, itemDescription, photo, 
             price, listingDate, hashTag, sellerID) 
-            values ("."'$name', '$descrip', '$photo', '$price', now(), '$hashTag', '$sellID')";
+            values ("."'$name', '$descrip', '$photo', '$price', now(), '$hashTag', '$sellID');";
 			$this->getDB()->execute($sql);
 			$this->itemID=$this->getDB()->getInsertID();	
+            // SOMETHING WRONG HERE !!!!
 		} else {
-			$sql="update listing ".
-					"set itemName='$name', ".
+            $sql= 
+			 "update listing ".
+					"set itemName = '$name', ".
 			            "itemDescription='$descrip', ".
-                        "photo='$photo', ".
-                        "price='$price', ".
+                        "photo= '$photo', ".
+                        "price= $price, ".
                         "listingDate= now(), ".
                         "hashTag='$hashTag', ".
                         "sellerID='$sellID'".
-					"where itemID= $id";
+					"where itemID = '$id'";
 			$this->getDB()->execute($sql);
 		}
 		$this->hasChanges=false;
 	}
 	
-	public function delete () {
-	    $sql="delete from agorauser where userID = $id";
+	public function delete ($id) {
+	    $sql="delete from listing where itemID =$id;";
 		$rows=$this->getDB()->execute($sql);
 		$this->id=$null;
 		$this->changed=false;

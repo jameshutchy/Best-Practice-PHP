@@ -5,7 +5,7 @@ class ListingFormView extends AbstractView {
 	public function prepare () {
         $model = $this->getModel();
         $content = '<h1>Listing</h1>
-        <form class="aForm p-4" method="post" enctype="multipart/form-data" action="##site##user.php/newListing/'.$model->getID().'">
+        <form class="aForm p-4" method="post" enctype="multipart/form-data" action="##site##user.php/newListing">
             <div class="mb-3">
                 <div class="mb-3">
                     <label for="itemName" class="form-label">Item Name</label>
@@ -33,7 +33,7 @@ class ListingFormView extends AbstractView {
             </div>
         </form>';
     include_once 'public/signIn.php';
-    include 'public/navLogIn.php'
+    include 'public/navLogIn.php';
     $this->setTemplateField('nav', $nav);
 		$this->setTemplateField('login', $login);
 	  	$this->setTemplateField('content',$content);

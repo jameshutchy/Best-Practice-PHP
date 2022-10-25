@@ -4,7 +4,6 @@ class SignUpView extends AbstractView {
 
 	public function prepare () {
     $model = $this->getModel();
-    $value = null;
 		$content='<h1>Sign Up</h1>
         <form class="aForm p-4" action="##site##user.php/signUp" method="post" enctype="multipart/form-data">
             <div class="mb-3">

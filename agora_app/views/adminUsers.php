@@ -9,7 +9,7 @@ class AdminUsersView extends AbstractView {
         $content = '<section class="d-flex flex-column">
         <div class="d-flex justify-content-start">
           <h1 class="flex-fill">Users</h1> 
-          <a href="##site##user.php/addUser/'.$model->getID().'">
+          <a href="##site##user.php/addUser">
             <button class="btn btnColour m-1">Add User</button>
           </a>
         </div> 
@@ -19,7 +19,10 @@ class AdminUsersView extends AbstractView {
             if ($user->getRole() !== 'admin'){
               $content.= 
               '<div class="listingCard  rounded-2 border m-1">
-                <h2 class="listingName p-2 rounded-top">'.$user->getRole().'</h2>
+                <div class="d-flex listingName p-2 rounded-top">
+                  <h2 class="flex-fill">'.$user->getRole().'</h2>
+                  <a href="##site##user.php/deleteUser/'.$user->getID().'"><button class="btn btnColour m-1">Delete</button></a>
+                </div>
                     
                 <div class="d-flex flex-wrap justify-content-between">
                     <div class="m-1 px-2">
@@ -44,12 +47,7 @@ class AdminUsersView extends AbstractView {
                   <div class="m-1 px-2">
                     <p>City</p>                   
                     <h5>'.$user->getCity().'</h5>
-                  </div>
-                  
-                      <div class="m-1 d-flex">     
-                        <a class="mt-3 href="##site##user.php/editUser/'.$user->getID().'"><button class="btn btnColour m-1">Edit Profile</button></a>
-                        <a class="mt-3 href="##site##user.php/deleteUser/'.$user->getID().'"><button class="btn btnColour m-1">Delete</button></a>                                                       
-                    </div>
+                  </div>                                                                                                
                   </div>
                 </div>';
             }          

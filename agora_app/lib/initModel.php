@@ -1,4 +1,5 @@
 <?php
-$id = $uri->getID();
+session_start();
+$id = $_SESSION['id'];
 $model->getUserByID($id);
 $model->loadBusiness($db);

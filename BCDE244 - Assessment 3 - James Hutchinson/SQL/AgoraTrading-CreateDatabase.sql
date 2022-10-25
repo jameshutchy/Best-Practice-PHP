@@ -48,11 +48,14 @@ FOREIGN KEY (sellerID) REFERENCES AgoraUser(userID)
 )ENGINE=InnoDB;
 SELECT * FROM listing;
 
+
+
 CREATE TABLE Purchase (
 purchaseID INT AUTO_INCREMENT PRIMARY KEY,
 purchaseDate DATE NOT NULL,
 buyerID INT NOT NULL,
 price DECIMAL(10,2) NOT NULL,
+itemName VARCHAR(70) NOT NULL,
 itemID INT NOT NULL,
 FOREIGN KEY (itemID) REFERENCES listing(itemID),
 FOREIGN KEY (buyerID) REFERENCES AgoraUser(userID)

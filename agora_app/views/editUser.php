@@ -4,9 +4,9 @@ class EditUserView extends AbstractView {
 
 	public function prepare () {
     $model = $this->getModel();
-    include 'public/defineRole.php'
+    include 'public/defineRole.php';
 		$content='<h1>User</h1>
-        <form class="aForm p-4" action="##site##user.php/editUser/'.$model->getID().'" method="post">
+        <form class="aForm p-4" action="##site##user.php/editUser" method="post">
             <div id="sellerBuyer">
             <div class="mb-3">
               <label for="firstName" class="form-label">First Name</label>
@@ -34,11 +34,11 @@ class EditUserView extends AbstractView {
         </div>
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" name="password" value="'.$model->getPassword().'">
+            <input type="password" class="form-control" name="password" value="">
           </div>
           <div class="mb-3">
             <label for="confirmPassword" class="form-label">Confirm Password</label>
-            <input type="password" class="form-control" ="confirmPassword" value="'.$model->getPassword().'">
+            <input type="password" class="form-control" ="confirmPassword" value="">
           </div>
           <button type="submit" class="btn btnColour">Submit</button> 
           </form>';

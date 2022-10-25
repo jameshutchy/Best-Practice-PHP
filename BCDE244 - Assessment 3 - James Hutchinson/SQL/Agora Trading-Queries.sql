@@ -2,33 +2,10 @@
 Assignment 2 - Agora Trading
 MySQl Version 8.0
 */
--- QUERIES
+-- PROCEDURES
 USE agoratrading;
--- COMPLEX QUERY -- create an invoice for items purchased
-DROP PROCEDURE IF EXISTS purchase_invoice;
-DELIMITER //
-CREATE PROCEDURE purchase_invoice( IN pID INT)
-BEGIN
-	SELECT b.businessName, AES_DECRYPT(b.banknumber, @encrypt_key) AS 'bankNumber', b.contactNumber, b.email, b.logo,
-	 l.sellerID, CONCAT(AES_DECRYPT(u.firstName, @encrypt_key), ' ', AES_DECRYPT(u.lastName, @encrypt_key)) AS 'sellerName', 
-     l.itemName, o.price, o.quantity, p.purchaseDate, (o.price * o.quantity) AS 'total'
-	 FROM purchase p
-	 INNER JOIN orderline o ON o.purchaseID = p.purchaseID
-	 INNER JOIN listing l ON l.itemID = o.itemID
-     INNER JOIN agorauser u ON u.userID = l.sellerID
-	 INNER JOIN business b ON u.businessID = b.businessID
-	 WHERE p.purchaseID = pID
-	 ORDER BY l.sellerID;
-END; //
-DELIMITER ;
-SET @purchaseID = 5;
--- TEST TO CHECK HOW MANY ITEMS ARE ON ORDERLINE
-SELECT * FROM ORDERLINE WHERE purchaseID = @purchaseID;
--- TEST THE STORED PROCEDURE
-CALL purchase_invoice(@purchaseID);
 
-
--- SEARCH QUERY BUYER
+-- SEARCH PROCEDURE BUYER
 DROP PROCEDURE IF EXISTS sp_searchListingBuyer;
 DELIMITER //
 CREATE PROCEDURE sp_searchListingBuyer(IN theBusinessID INT, IN word VARCHAR(20))
@@ -51,8 +28,11 @@ BEGIN
 	WHERE l.sellerID != b.userID;
 END;
 //
+select * from agorauser;
+select * from listing;
 call sp_searchListingBuyer(1, '');
--- SEARCH QUERY SELLER
+
+-- SEARCH PROCEDURE SELLER
 DROP PROCEDURE IF EXISTS sp_searchListingSeller;
 DELIMITER //
 CREATE PROCEDURE sp_searchListingSeller(IN theSeller INT, IN word VARCHAR(20))
@@ -68,7 +48,8 @@ SELECT itemID, itemName, itemDescription,
 END;
 //
 call sp_searchListingSeller(6, '');
--- FOR SEARCH QUERY BUSINESS ADMIN 
+
+-- FOR SEARCH PROCEDURE BUSINESS ADMIN 
 DROP PROCEDURE IF EXISTS sp_searchListingAdmin;
 DELIMITER //
 CREATE PROCEDURE sp_searchListingAdmin(IN theBusinessID INT, IN word VARCHAR(20))
@@ -92,6 +73,8 @@ BEGIN
 END;
 //
 call sp_searchListingAdmin(1, '');
+
+-- lOAD SINGLE LISTING PROCEDURE
 DROP PROCEDURE IF EXISTS sp_loadListing;
 DELIMITER //
 CREATE PROCEDURE sp_loadListing(IN id INT)
@@ -104,6 +87,7 @@ BEGIN
 	WHERE itemID = id;
 END;
 //
+-- LOAD ALL LISTINGS PROCEUDRE
 DROP PROCEDURE IF EXISTS sp_loadAllListing;
 DELIMITER //
 CREATE PROCEDURE sp_loadAllListing()
@@ -125,4 +109,32 @@ BEGIN
 	FROM agorauser where username = theUsername;
 END;
 //
+call sp_login('buyer3');
 select* from agorauser;
+
+-- PURCHASE ITEM PROCEDURE 
+DROP PROCEDURE IF EXISTS sp_purchaseItem;
+DELIMITER //
+CREATE PROCEDURE sp_purchaseItem(IN theBuyerID INT, IN listingID INT)
+BEGIN
+	DECLARE itemPrice DECIMAL(10,2);
+    DECLARE iName VARCHAR(70);
+    SELECT price, itemName into itemPrice, iName FROM listing WHERE itemID = listingID;
+	INSERT INTO purchase(purchaseDate, buyerID, price, itemName, itemID)
+    VALUES(now(), theBuyerID, itemPrice, iName, listingID);
+END;
+//
+select * from purchase;
+
+DROP PROCEDURE IF EXISTS sp_editListing;
+DELIMITER //
+CREATE PROCEDURE sp_editListing(
+IN theID INT, IN theName VARCHAR(70), IN theDescription TEXT, 
+IN thePhoto VARCHAR(70), IN thePrice DECIMAL(10,2), IN tag VARCHAR(80))
+BEGIN
+    UPDATE listing
+    SET itemName = theName, itemDescription = theDescription, photo = thePhoto, 
+    price = thePrice, hashTag = tag where itemID = theID;
+END;
+//
+call sp_editListing(10, 'oranges', 'some description', 'oranges.jpg', 5, '#test');

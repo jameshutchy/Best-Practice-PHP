@@ -85,7 +85,7 @@ class BusinessModel extends AbstractModel {
 
 	public function load($id) {   
             $this->businessID = $id;
-            $sql="select * from business where businessID = '$id'";
+            $sql="select * from business where businessID = '$id';";
             $rows=$this->getDB()->query($sql);
             if (count($rows)==0) {
                 throw new InvalidDataException("user slkdjfkls $username not found");
@@ -98,8 +98,7 @@ class BusinessModel extends AbstractModel {
             $this->hQAddress=$row['hqAddress'];
             $this->hQCity=$row['hqCity'];
             $this->changed=false;
-        
-		
+    		
 	}
 	
 	public function save() {
@@ -114,7 +113,7 @@ class BusinessModel extends AbstractModel {
 		if ($id === null) {
 			$sql="insert into business(businessName, registrationNumber, bankNumber, logo, 
             hqAddress, hqCity) 
-            values ("."'$name', '$regID', '$bnknum', '$logo', '$addy', '$city')";
+            values ("."'$name', '$regID', '$bnknum', '$logo', '$addy', '$city');";
 			$this->getDB()->execute($sql);
 			$this->businessID=$this->getDB()->getInsertID();	
 		} else {
@@ -125,21 +124,21 @@ class BusinessModel extends AbstractModel {
                         "logo='$logo', ".
                         "hqAddress='$addy', ".
                         "hqCity='$city' ".
-					"where businessID = $id";
+					"where businessID = $id;";
 			$this->getDB()->execute($sql);
 		}
 		$this->hasChanges=false;
 	}
 	
 	public function delete () {
-	    $sql="delete from business where businessID = $id";
+	    $sql="delete from business where businessID = $id;";
 		$rows=$this->getDB()->execute($sql);
 		$this->id=$null;
 		$this->changed=false;
 	}
     // users
     public function getUsers(){
-        $sql = "select * from agorauser where businessID =" .$this->businessID. "";
+        $sql = "select * from agorauser where businessID =" .$this->businessID. ";";
         $rows=$this->getDB()->query($sql);
         if (count($rows)==0) {
             throw new InvalidDataException("users not found");
